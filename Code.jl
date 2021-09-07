@@ -2,15 +2,17 @@
 
 using DataFrames, CSV, StatsBase
 
-inputs = readdir(joinpath("Input","datasets"), join = true)
+inputs = readdir(joinpath("Input", "COSORE", "datasets"), join = true)
 
 Names = []
-[push!(Names, inputs[i][31:end-4]) for i = 1:length(inputs)]
+# 38 is the number of character in e.g., "Input/COSORE/datasets/data_d20190409_" 
+# 4 is the number of character in ".csv"
+[push!(Names, inputs[i][38:end-4]) for i = 1:length(inputs)]
 
 # Some names appear more than once, e.g. MATHES, 
 # Need to numerize them e.g. MATHES1, MATHES2
+# Note, this is something Ben Bond-Lamberty could update in next COSORE version
 n = countmap(Names)
-
 d = []
 for i = 1:length(n)
 	if n[Names[i]] > 1
@@ -18,16 +20,17 @@ for i = 1:length(n)
 	end
 end
 #d = unique(d)
-
 for i = 1:length(d)
 	x = findfirst(x -> x == d[i], Names)
 	Names[x] = string(Names[x], string(i))
 end
-
 # Note, Names work for now, but VARGAS1 and VARGAS2 would be better
-Data = Dict(Names .=> [[] for i in 1:length(Names)])
 
+
+# Create a Dictionary with name => dataframe
+# e.g., Data["ZOU"] is ZOU site dataframe
+Data = Dict(Names .=> [[] for i in 1:length(Names)])
 [push!(Data[Names[i]], DataFrame(CSV.File(inputs[i]))) for i = 1:length(Names)]
 
-
+# to do: reading the DataFrame, give format of datetime columns
 
