@@ -34,7 +34,15 @@ end
 # Create a Dictionary with name => dataframe
 # e.g., Data["ZOU"] is ZOU site dataframe
 Data = Dict(Names .=> [[] for i in 1:length(Names)]);
-[push!(Data[Names[i]], DataFrame(CSV.File(inputs[i]))) for i = 1:length(Names)];
+[push!(Data[Names[i]], DataFrame(CSV.File(inputs[i]; dateformat="yyyy-mm-dd HH:MM:SS"))) for i = 1:length(Names)];
 
-# to do: reading the DataFrame, give format of datetime columns
+# Data[Names[i]][1] gives DataFrame i
+
+# to do: filter out DataFrames that don't have soil moisture or soil temperature
+
+# names(df) gives Vector{String} of column names of DataFrame df
+
+# to do: write a function file that 3D plot Rsoil, Tsoil, SWC
+
+# to do: write a function file that fites DAMM to Rsoil, Tsoil, SWC
 
