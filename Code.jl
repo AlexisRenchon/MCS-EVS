@@ -46,3 +46,13 @@ Data = Dict(Names .=> [[] for i in 1:length(Names)]);
 
 # to do: write a function file that fites DAMM to Rsoil, Tsoil, SWC
 
+include("DAMMfit.jl");
+df = Data[Names[1]][1]
+Resp = df.CSR_FLUX_CO2
+Ind_var = hcat(df.CSR_T5, df.CSR_SM5)
+poro_val = maximum(df.CSR_SM5)
+fitDAMM(Ind_var, Resp)
+
+
+
+
