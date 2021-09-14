@@ -34,25 +34,24 @@ end
 # Create a Dictionary with name => dataframe
 # e.g., Data["ZOU"] is ZOU site dataframe
 Data = Dict(Names .=> [[] for i in 1:length(Names)]);
-[push!(Data[Names[i]], DataFrame(CSV.File(inputs[i]; dateformat="yyyy-mm-dd HH:MM:SS"))) for i = 1:length(Names)];
-
-# Data[Names[i]][1] gives DataFrame i
+[push!(Data[Names[i]], DataFrame(CSV.File(inputs[i];
+	dateformat="yyyy-mm-dd HH:MM:SS",
+	missingstring="NA"))) for i = 1:length(Names)];
 
 # to do: filter out DataFrames that don't have soil moisture or soil temperature
 
-# names(df) gives Vector{String} of column names of DataFrame df
-
-# to do: write a function file that 3D plot Rsoil, Tsoil, SWC
-
-# to do: write a function file that fites DAMM to Rsoil, Tsoil, SWC
-
 include("DAMMfit.jl");
-df = Data[Names[1]][1]
+
+i = 5;
+df = Data[Names[i]][1]
+names(df)
+dropmissing!(df, [:CSR_FLUX_CO2, :CSR_T5, :CSR_SM30])
 Resp = df.CSR_FLUX_CO2
-Ind_var = hcat(df.CSR_T5, df.CSR_SM5)
-poro_val = maximum(df.CSR_SM5)
-fitDAMM(Ind_var, Resp)
+Ind_var = hcat(df.CSR_T5, df.CSR_SM30)
+poro_val = maximum(df.CSR_SM30)
+params = fitDAMM(Ind_var, Resp)
 
-
+include("3Dplot.jl");
+plot3D(Ind_var, Resp)
 
 
