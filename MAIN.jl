@@ -8,10 +8,6 @@ params = [1, 1, 1]
 for i = 1:n
 	println("Working on dataset ", i, ", ", Names[i], "...")
 	df = Data[Names[i]][1]
-	if isempty(df)
-		println("Skipping dataset ", i, ", ", Names[i], ". Empty df.") 
-		continue
-	end
 	coln = names(df)
 	Ts_names = names(df, r"CSR_T[0-9]")
 	if isempty(Ts_names)
@@ -32,12 +28,14 @@ for i = 1:n
 	SWC_shallowest = findall(x -> x == minimum(SWC_depth), SWC_depth)
 	SWC_shallowest_name = SWC_names[SWC_shallowest]
 	dropmissing!(df, ["CSR_FLUX_CO2", Ts_shallowest_name[1], SWC_shallowest_name[1]])
-
+	if isempty(df)
+		println("Skipping dataset ", i, ", ", Names[i], ". Empty driver columns.") 
+		continue
+	end
 	if median(df[!, SWC_shallowest_name[1]]) > 1 # some SWC are in % instead of m3 m-3
 		println("SWC in % detected. Converting to m3 m-3.")
 		df[!, SWC_shallowest_name[1]] = df[!, SWC_shallowest_name[1]]./100
 	end
-
 	Resp = df.CSR_FLUX_CO2
 	Ind_var = hcat(df[!, Ts_shallowest_name[1]], df[!, SWC_shallowest_name[1]])
 	poro_val = maximum(df[!, SWC_shallowest_name[1]])

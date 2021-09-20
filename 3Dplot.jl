@@ -1,6 +1,6 @@
 using GLMakie, UnicodeFun, SparseArrays
 
-L = 25 # resolution
+L = 40 # resolution, and max T
 x_ax = collect(range(1, length=L, stop=L))
 
 xD = collect(range(1, length=L, stop=1))
@@ -30,12 +30,12 @@ function plot3D(Ind_var, Resp)
 	data3D = Vec3f0.(Ind_var[:, 1], Ind_var[:, 2], Resp)
 	surface3D = DAMM_Matrix
 	
-	p3D = scatter!(ax3D, data3D, markersize = 5000, color = :black)
+	p3D = scatter!(ax3D, data3D, markersize = 1000, color = :black)
 	surface!(ax3D, x_ax, y_ax, surface3D, colormap = Reverse(:Spectral), transparency = true, alpha = 0.2, shading = false)
 	wireframe!(ax3D, x_ax, y_ax, surface3D, overdraw = true, transparency = true, color = (:black, 0.1));
 
-	xlims!(0, 30)
-	ylims!(0, 0.45)
+	xlims!(0, 40)
+	ylims!(0, 0.7)
 	zlims!(0, 25)
 	fig
 end
