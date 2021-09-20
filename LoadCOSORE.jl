@@ -17,10 +17,10 @@ Names
 # Need to numerize them e.g. MATHES1, MATHES2
 # Note, this is something Ben Bond-Lamberty could update in next COSORE version
 n = countmap(Names)
-d = []
+global d = []
 for i = 1:length(n)
 	if n[Names[i]] > 1
-		d = push!(d, Names[i]) 	
+		global d = push!(d, Names[i]) 	
 	end
 end
 #d = unique(d)

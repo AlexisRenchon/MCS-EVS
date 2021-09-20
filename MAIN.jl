@@ -1,24 +1,47 @@
 include("LoadCOSORE.jl");
-
-# to do: filter out DataFrames that don't have soil moisture or soil temperature
-# when they do, need to get column name automatically, most shallow surface?
-
 include("DAMMfit.jl");
 
-i = 5;
-df = Data[Names[i]][1]
-names(df)
-dropmissing!(df, [:CSR_FLUX_CO2, :CSR_T7, :CSR_SM5])
-Resp = df.CSR_FLUX_CO2
-Ind_var = hcat(df.CSR_T7, df.CSR_SM5)
-poro_val = maximum(df.CSR_SM5)
-params = fitDAMM(Ind_var, Resp)
+n = length(Names)
+poro_val = 0.5
+params = [1, 1, 1]
+for i = 1:n
+	println(i)
+	df = Data[Names[i]][1]
+	if isempty(df)
+		continue
+	end
+	coln = names(df)
+	Ts_names = names(df, r"CSR_T[0-9]")
+	if isempty(Ts_names)
+		continue # go to next i
+	end
+	Ts_depth = [Ts_names[i][6:end] for i = 1:length(Ts_names)]
+	Ts_depth = parse.(Float64, Ts_depth)
+	SWC_names = names(df, r"CSR_SM[0-9]")
+	if isempty(SWC_names)
+		continue # go to next i
+	end
+	SWC_depth = [SWC_names[i][7:end] for i = 1:length(SWC_names)]
+	SWC_depth = parse.(Float64, SWC_depth)
+	Ts_shallowest = findall(x -> x == minimum(Ts_depth), Ts_depth)
+	Ts_shallowest_name = Ts_names[Ts_shallowest]
+	SWC_shallowest = findall(x -> x == minimum(SWC_depth), SWC_depth)
+	SWC_shallowest_name = SWC_names[SWC_shallowest]
+	dropmissing!(df, ["CSR_FLUX_CO2", Ts_shallowest_name[1], SWC_shallowest_name[1]])
 
-include("3Dplot.jl");
-plot3D(Ind_var, Resp)
+	if maximum(df[!, SWC_shallowest_name[1]]) > 1 # some SWC are in % instead of m3 m-3
+		df[!, SWC_shallowest_name[1]] = df[!, SWC_shallowest_name[1]]./100
+	end
 
+	Resp = df.CSR_FLUX_CO2
+	Ind_var = hcat(df[!, Ts_shallowest_name[1]], df[!, SWC_shallowest_name[1]])
+	poro_val = maximum(df[!, SWC_shallowest_name[1]])
+	params = fitDAMM(Ind_var, Resp)
+	include("3Dplot.jl");
+	fig = plot3D(Ind_var, Resp)
+	name = string(Names[i], ".png")	
+	save(joinpath("Output", "COSORE_DAMM", name), fig)
+end
 
-# to do, write separate function to load 1. COSORE, 2. FLUXNET
-# this script will just 1. fit DAMM and 2. plot (current lines 44-56)
-
+# Some soil moisture are in %, need to convert them to m3 m-3
 
