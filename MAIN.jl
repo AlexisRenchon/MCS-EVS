@@ -1,3 +1,4 @@
+using Statistics
 include("LoadCOSORE.jl");
 include("DAMMfit.jl");
 
@@ -5,20 +6,23 @@ n = length(Names)
 poro_val = 0.5
 params = [1, 1, 1]
 for i = 1:n
-	println(i)
+	println("Working on dataset ", i, ", ", Names[i], "...")
 	df = Data[Names[i]][1]
 	if isempty(df)
+		println("Skipping dataset ", i, ", ", Names[i], ". Empty df.") 
 		continue
 	end
 	coln = names(df)
 	Ts_names = names(df, r"CSR_T[0-9]")
 	if isempty(Ts_names)
+		println("Skipping dataset ", i, ", ", Names[i], ". No soil temperature.")
 		continue # go to next i
 	end
 	Ts_depth = [Ts_names[i][6:end] for i = 1:length(Ts_names)]
 	Ts_depth = parse.(Float64, Ts_depth)
 	SWC_names = names(df, r"CSR_SM[0-9]")
 	if isempty(SWC_names)
+		println("Skipping dataset ", i, ", ", Names[i], ". No soil moisture.")
 		continue # go to next i
 	end
 	SWC_depth = [SWC_names[i][7:end] for i = 1:length(SWC_names)]
@@ -29,7 +33,8 @@ for i = 1:n
 	SWC_shallowest_name = SWC_names[SWC_shallowest]
 	dropmissing!(df, ["CSR_FLUX_CO2", Ts_shallowest_name[1], SWC_shallowest_name[1]])
 
-	if maximum(df[!, SWC_shallowest_name[1]]) > 1 # some SWC are in % instead of m3 m-3
+	if median(df[!, SWC_shallowest_name[1]]) > 1 # some SWC are in % instead of m3 m-3
+		println("SWC in % detected. Converting to m3 m-3.")
 		df[!, SWC_shallowest_name[1]] = df[!, SWC_shallowest_name[1]]./100
 	end
 
@@ -41,6 +46,7 @@ for i = 1:n
 	fig = plot3D(Ind_var, Resp)
 	name = string(Names[i], ".png")	
 	save(joinpath("Output", "COSORE_DAMM", name), fig)
+	println("Success!")
 end
 
 # Some soil moisture are in %, need to convert them to m3 m-3
