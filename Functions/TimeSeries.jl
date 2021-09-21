@@ -21,8 +21,9 @@ function timeserie(timesteps, Rsoil, Tsoil, Msoil)
 	xyTsoil = @. Point2f0(datetime2unix(timesteps), Tsoil)
 	xyMsoil = @. Point2f0(datetime2unix(timesteps), Msoil)
 
-	p1 = scatter!(ax1, xyRsoil, markersize = 10, color = :black)
-	p2 = scatter!(ax2, xyTsoil, markersize = 10, color = :red)
-	p3 = scatter!(ax3, xyMsoil, markersize = 10, color = :blue)
+	p1 = scatter!(ax1, xyRsoil, markersize = 3, color = :black)
+	p2 = scatter!(ax2, xyTsoil, markersize = 3, color = :red)
+	p3 = scatter!(ax3, xyMsoil, markersize = 3, color = :blue)
+	fig
 end
 

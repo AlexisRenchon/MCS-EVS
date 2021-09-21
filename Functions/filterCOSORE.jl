@@ -1,11 +1,7 @@
 using Statistics
 include("LoadCOSORE.jl");
-include("DAMMfit.jl");
 
 n = length(Names)
-poro_val = 0.5
-params = [1, 1, 1]
-
 df =  Dict(Names .=> [[] for i in 1:n])
 Ts_names = Dict(Names .=> [[] for i in 1:n])
 Ts_depth = Dict(Names .=> [[] for i in 1:n])
@@ -15,11 +11,10 @@ Ts_shallowest = Dict(Names .=> [[] for i in 1:n])
 Ts_shallowest_name = Dict(Names .=> [[] for i in 1:n])
 SWC_shallowest = Dict(Names .=> [[] for i in 1:n])
 SWC_shallowest_name = Dict(Names .=> [[] for i in 1:n])
-
-count = 0
+#count = 0
 for i in Names
-	count += 1
-	println("Working on dataset ", count, ", ", i, "...")
+	#count += 1
+	println("Working on dataset ", i, "...")
 	df[i] = Data[i]
 	coln = names(df[i][1])
 	Ts_names[i] = names(df[i][1], r"CSR_T[0-9]")
