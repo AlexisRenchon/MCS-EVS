@@ -36,14 +36,25 @@ end
 
 # Save DataFrame with COSORE DAMM params
 df_desc = DataFrame(CSV.File(joinpath("Input", "COSORE", "description.csv"))) # contains IGBP
+#df_desc.names = [df_desc.CSR_DATASET[i][11:end] for i = 1:size(df_desc)[1]]
+datanames = [inputs[i][28:end-4] for i = 1:n]
+IGBP = Dict(Names .=> ["NA" for i in 1:n])
+for i = 1:n
+	println(i)
+	this = findfirst(x -> x == datanames[i], df_desc.CSR_DATASET)
+	if isnothing(this) == false
+		IGBP[Names[i]] = df_desc.CSR_IGBP[this]
+	end
+end
+
 df_p = DataFrame("Site_Name" => [Names[i] for i = 1:n],
+		 "IGBP" => [IGBP[i] for i in Names],
 		 "Porosity" => [poro_vals[i] for i in Names],
 		 "a" => [params_x[i][1] for i in Names],
 		"kMsx" => [params_x[i][2] for i in Names],
 		"kMo2" => [params_x[i][3] for i in Names])
 
 CSV.write(joinpath("Output", "COSORE_DAMMparams.csv"), df_p)
-
 
 # Timeseries for COSORE shallowest Tsoil and SWC
 include(joinpath("Functions", "TimeSeries.jl"))
