@@ -1,3 +1,7 @@
+# TO DO 
+# Figures and parameters for FLUXNET
+# Interactive figure COSORE on HOT TEA
+
 using Statistics
 
 # 1. Load COSORE 82 datasets and 2. subset the data we want, mapped to site name
@@ -16,6 +20,7 @@ poro_val = 0.5
 params = [1.0, 1.0, 1.0]
 poro_vals = Dict(Names .=> [0.5 for i in 1:n]) 
 params_x = Dict(Names .=> [[1.0, 1.0, 1.0] for i in 1:n])
+fig = Dict(Names .=> [Figure() for i in 1:n])
 for i in Names # for each COSORE dataset
 	println("Working on ", i, "...")
 	if isempty(df[i][1]) == false
@@ -27,9 +32,13 @@ for i in Names # for each COSORE dataset
 			params_x[i] = fitDAMM(Ind_var, Resp) # fit DAMM to data, get parameters
 			params = params_x[i]
 			include(joinpath("Functions", "3Dplot.jl"));
-			fig = plot3D(Ind_var, Resp)
-			name = string(i, ".png")	
-			save(joinpath("Output", "COSORE_DAMM", name), fig)
+
+			fig[i] = plot3D(Ind_var, Resp)
+			# should this just save plot/axis? (not fig), so that slider work... to test
+
+			#fig = plot3D(Ind_var, Resp)
+			#name = string(i, ".png")	
+			#save(joinpath("Output", "COSORE_DAMM", name), fig)
 		end
 	end
 end
