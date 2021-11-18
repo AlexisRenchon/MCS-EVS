@@ -20,6 +20,7 @@ poro_val = 0.5
 params = [1.0, 1.0, 1.0]
 poro_vals = Dict(Names .=> [0.5 for i in 1:n]) 
 params_x = Dict(Names .=> [[1.0, 1.0, 1.0] for i in 1:n])
+using GLMakie
 fig = Dict(Names .=> [Figure() for i in 1:n])
 for i in Names # for each COSORE dataset
 	println("Working on ", i, "...")

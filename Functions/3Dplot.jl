@@ -1,4 +1,5 @@
 using GLMakie, UnicodeFun, SparseArrays
+# using WGLMakie, UnicodeFun, SparseArrays, JSServe
 
 L = 40 # resolution, and max T
 x_ax = collect(range(1, length=L, stop=L))
@@ -17,8 +18,6 @@ yD = repeat(yD, outer=L)
 yD = Int.(yD)
 
 DAMM_Matrix = Matrix(sparse(xD, yD, DAMM(x_range, params)))
-
-
 
 function plot3D(Ind_var, Resp)
 	fig = Figure()
