@@ -1,4 +1,4 @@
-using DataFrames, CSV
+using DataFrames, CSV, Dates
 
 function getID()
 	# get the path of folder files
@@ -45,4 +45,3 @@ start with NEE_CUT_REF, with NEE_CUT_REF_QC = 1, NIGHT = 1 ? change later if nee
 SWC_F_MDS_1 for SWC, SWC_F_MDS_1_QC = 0, NIGHT = 1 ?
 TS_F_MDS_1 for TS, TS_F_MDS_1_QC = 0, NIGHT = 1 ? 
 =#
-
